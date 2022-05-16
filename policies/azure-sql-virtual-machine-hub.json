@@ -1,0 +1,64 @@
+{
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "name": "azure-sql-virtual-machine-hub",
+    "properties": {
+        "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Virtual Machines",
+        "description": "This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Virtual Machines.",
+        "mode": "All",
+        "metadata": {
+            "category": "SQL"
+        },
+        "parameters": {
+            "effect": {
+                "type": "string",
+                "defaultValue": "Audit",
+                "allowedValues": [
+                    "Audit",
+                    "Modify",
+                    "Disabled"
+                ],
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "The effect determines what happens when the policy rule is evaluated to match"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.SqlVirtualMachine/SqlVirtualMachines"
+                    },
+                    {
+                        "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlImageSku",
+                        "in": [
+                            "Standard",
+                            "Enterprise"
+                        ]
+                    },
+                    {
+                        "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlServerLicenseType",
+                        "notEquals": "AHUB"
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[parameters('effect')]",
+                "details": {
+                    "roleDefinitionIds": [
+                        "/providers/Microsoft.Authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c"
+                    ],
+                    "conflictEffect": "deny",
+                    "operations": [
+                        {
+                            "operation": "addOrReplace",
+                            "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlServerLicenseType",
+                            "value": "AHUB"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
