@@ -1,0 +1,107 @@
+{
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "name": "azure-sql-database-hub",
+    "properties": {
+        "displayName": "Hybrid Use Benefit (HUB) for SQL Database",
+        "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Databases.",
+        "mode": "All",
+        "metadata": {
+            "category": "SQL"
+        },
+        "parameters": {
+            "effect": {
+                "type": "string",
+                "defaultValue": "Audit",
+                "allowedValues": [
+                    "AuditIfNotExists",
+                    "DeployIfNotExists",
+                    "Disabled"
+                ],
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "The effect determines what happens when the policy rule is evaluated to match"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Sql/servers/databases"
+                    },
+                    {
+                        "field": "Microsoft.Sql/servers/databases/currentSku.tier",
+                        "in": [
+                            "GeneralPurpose",
+                            "Hyperscale",
+                            "BusinessCritical"
+                        ]
+                    },
+                    {
+                        "field": "Microsoft.Sql/servers/databases/currentSku.name",
+                        "notContains": "GP_S"
+                    },
+                    {
+                        "field": "Microsoft.Sql/servers/databases/currentSku.name",
+                        "notEquals": "ElasticPool"
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[parameters('effect')]",
+                "details": {
+                    "type": "Microsoft.Sql/servers/databases",
+                    "name": "[field('fullname')]",
+                    "roleDefinitionIds": [
+                        "/providers/Microsoft.Authorization/roleDefinitions/9b7fa17d-e63e-47b0-bb0a-15c516ac86ec"
+                    ],
+                    "existenceCondition": {
+                        "allOf": [
+                            {
+                                "field": "Microsoft.Sql/servers/databases/licenseType",
+                                "equals": "BasePrice"
+                            }
+                        ]
+                    },
+                    "deployment": {
+                        "properties": {
+                            "mode": "incremental",
+                            "template": {
+                                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                "contentVersion": "1.0.0.0",
+                                "parameters": {
+                                    "databaseName": {
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "type": "string"
+                                    }
+                                },
+                                "resources": [
+                                    {
+                                        "name": "[parameters('databaseName')]",
+                                        "type": "Microsoft.Sql/servers/databases",
+                                        "apiVersion": "2017-10-01-preview",
+                                        "location": "[parameters('location')]",
+                                        "properties": {
+                                            "licenseType": "BasePrice"
+                                        }
+                                    }
+                                ]
+                            },
+                            "parameters": {
+                                "databaseName": {
+                                    "value": "[field('fullName')]"
+                                },
+                                "location": {
+                                    "value": "[field('location')]"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

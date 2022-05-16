@@ -1,0 +1,57 @@
+{
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "name": "azure-sql-managed-instance-hub",
+    "properties": {
+        "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Managed Instance",
+        "description": "This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Managed Instance.",
+        "mode": "All",
+        "metadata": {
+            "category": "SQL"
+        },
+        "parameters": {
+            "effect": {
+                "type": "string",
+                "defaultValue": "Audit",
+                "allowedValues": [
+                    "Audit",
+                    "Modify",
+                    "Disabled"
+                ],
+                "metadata": {
+                    "displayName": "Effect",
+                    "description": "The effect determines what happens when the policy rule is evaluated to match"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Sql/ManagedInstances"
+                    },                    {
+                        "field": "Microsoft.Sql/ManagedInstances/LicenseType",
+                        "NotEquals": "BasePrice"
+                    }
+                ]
+            },
+            "then": {
+                "effect": "[parameters('effect')]",
+                "details": {
+                    "roleDefinitionIds": [
+                        "/providers/Microsoft.Authorization/roleDefinitions/4939a1f6-9ae0-4e48-a1e0-f2cbe897382d"
+                    ],
+                    "conflictEffect": "deny",
+                    "operations": [
+                        {
+                            "operation": "addOrReplace",
+                            "field": "Microsoft.Sql/ManagedInstances/LicenseType",
+                            "NotEquals": "BasePrice"
+                        
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
