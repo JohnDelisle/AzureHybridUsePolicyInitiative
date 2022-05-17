@@ -11,9 +11,9 @@ $gh = "https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiat
 foreach ($policy in $policies) {
     $policySource = Get-Content -Path "$($policy.FullName)\$($policy.Name).json" | ConvertFrom-Json -Depth 99
     
-    $policySource            | ConvertTo-Json -Depth 99 | Out-File -Path "$($policy.FullName)\azurepolicy.json"
-    $policySource.parameters | ConvertTo-Json -Depth 99 | Out-File -Path "$($policy.FullName)\azurepolicy.parameters.json"
-    $policySource.policyRule | ConvertTo-Json -Depth 99 | Out-File -Path "$($policy.FullName)\azurepolicy.rules.json"
+    $policySource                       | ConvertTo-Json -Depth 99 | Out-File -Path "$($policy.FullName)\azurepolicy.json"
+    $policySource.properties.parameters | ConvertTo-Json -Depth 99 | Out-File -Path "$($policy.FullName)\azurepolicy.parameters.json"
+    $policySource.properties.policyRule | ConvertTo-Json -Depth 99 | Out-File -Path "$($policy.FullName)\azurepolicy.rules.json"
 
     # substitute GitHub URLs and other stuff into my README.md files.. I'm lazy
     $rawGhPolicy     = "$gh/$($policy.Parent.Name)/$($policy.Name)/azurepolicy.json"

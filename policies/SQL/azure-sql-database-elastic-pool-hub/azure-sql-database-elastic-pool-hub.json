@@ -1,59 +1,58 @@
 {
-  "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "azure-sql-database-elastic-pool-hub",
   "properties": {
-    "displayName": "Hybrid Use Benefit (HUB) for SQL Database Elastic Pool",
+    "name": "azure-sql-database-elastic-pool-hub",
+    "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Database Elastic Pool",
     "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Database in Elastic Pools.",
     "mode": "All",
     "metadata": {
       "category": "SQL"
-    }
-  },
-  "parameters": {
-    "effect": {
-      "type": "string",
-      "defaultValue": "Audit",
-      "allowedValues": [
-        "AuditIfNotExists",
-        "DeployIfNotExists",
-        "Disabled"
-      ],
-      "metadata": {
-        "displayName": "Effect",
-        "description": "The effect determines what happens when the policy rule is evaluated to match"
-      }
-    }
-  },
-  "policyRule": {
-    "if": {
-      "allOf": [
-        {
-          "field": "type",
-          "equals": "Microsoft.Sql/servers/elasticPools"
-        },
-        {
-          "field": "Microsoft.Sql/servers/elasticpools/sku.tier",
-          "in": [
-            "BusinessCritical",
-            "GeneralPurpose"
-          ]
-        }
-      ]
     },
-    "then": {
-      "effect": "[parameters('effect')]",
-      "details": {
-        "roleDefinitionIds": [
-          "/providers/Microsoft.Authorization/roleDefinitions/9b7fa17d-e63e-47b0-bb0a-15c516ac86ec"
+    "parameters": {
+      "effect": {
+        "type": "string",
+        "defaultValue": "Audit",
+        "allowedValues": [
+          "AuditIfNotExists",
+          "DeployIfNotExists",
+          "Disabled"
         ],
-        "conflictEffect": "deny",
-        "operations": [
+        "metadata": {
+          "displayName": "Effect",
+          "description": "The effect determines what happens when the policy rule is evaluated to match"
+        }
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
           {
-            "operation": "addOrReplace",
-            "field": "Microsoft.Sql/servers/elasticpools/licenseType",
-            "equals": "BasePrice"
+            "field": "type",
+            "equals": "Microsoft.Sql/servers/elasticPools"
+          },
+          {
+            "field": "Microsoft.Sql/servers/elasticpools/sku.tier",
+            "in": [
+              "BusinessCritical",
+              "GeneralPurpose"
+            ]
           }
         ]
+      },
+      "then": {
+        "effect": "[parameters('effect')]",
+        "details": {
+          "roleDefinitionIds": [
+            "/providers/Microsoft.Authorization/roleDefinitions/9b7fa17d-e63e-47b0-bb0a-15c516ac86ec"
+          ],
+          "conflictEffect": "deny",
+          "operations": [
+            {
+              "operation": "addOrReplace",
+              "field": "Microsoft.Sql/servers/elasticpools/licenseType",
+              "equals": "BasePrice"
+            }
+          ]
+        }
       }
     }
   }

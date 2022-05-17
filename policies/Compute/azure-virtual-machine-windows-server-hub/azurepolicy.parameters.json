@@ -5,6 +5,7 @@
     "allowedValues": [
       "Audit",
       "Modify",
+      "Deny",
       "Disabled"
     ],
     "metadata": {

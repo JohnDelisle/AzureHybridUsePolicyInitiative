@@ -1,7 +1,6 @@
 {
-  "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "azure-sql-virtual-machine-hub",
   "properties": {
+    "name": "azure-sql-virtual-machine-hub",
     "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Virtual Machines",
     "description": "This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Virtual Machines.",
     "mode": "All",

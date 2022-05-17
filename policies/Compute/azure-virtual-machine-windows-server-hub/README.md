@@ -1,4 +1,4 @@
-# Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server
+# Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server OS
 
 This policy assists with the governance of Azure Hybrid Use Benefit on on Azure VMs running Windows Server OSes.
 
@@ -14,7 +14,7 @@ See Microsoft documentation for background and use of Azure Policy samples [docs
 
 ````powershell
 # Create the Policy Definition (Subscription scope)
-$definition = New-AzPolicyDefinition -Name 'azure-virtual-machine-windows-server-hub' -DisplayName 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server' -description 'This policy assists with the governance of Azure Hybrid Use Benefit on on Azure VMs running Windows Server OSes.' -Policy 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//Compute/azure-virtual-machine-windows-server-hub/azurepolicy.rules.json' -Parameter 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//Compute/azure-virtual-machine-windows-server-hub/azurepolicy.parameters.json' -Mode All
+$definition = New-AzPolicyDefinition -Name 'azure-virtual-machine-windows-server-hub' -DisplayName 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server OS' -description 'This policy assists with the governance of Azure Hybrid Use Benefit on on Azure VMs running Windows Server OSes.' -Policy 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//Compute/azure-virtual-machine-windows-server-hub/azurepolicy.rules.json' -Parameter 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//Compute/azure-virtual-machine-windows-server-hub/azurepolicy.parameters.json' -Mode All
 
 # Set the scope to a resource group; may also be a subscription or management group
 $scope = Get-AzResourceGroup -Name 'YourResourceGroup'
@@ -23,14 +23,14 @@ $scope = Get-AzResourceGroup -Name 'YourResourceGroup'
 $policyparam = '{ "effect": { "value": "Audit" } }'
 
 # Create the Policy Assignment
-$assignment = New-AzPolicyAssignment -Name 'azure-virtual-machine-windows-server-hub-assignment' -DisplayName 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server Assignment' -Scope $scope.ResourceId -PolicyDefinition $definition -PolicyParameter $policyparam
+$assignment = New-AzPolicyAssignment -Name 'azure-virtual-machine-windows-server-hub-assignment' -DisplayName 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server OS Assignment' -Scope $scope.ResourceId -PolicyDefinition $definition -PolicyParameter $policyparam
 ````
 
 ## Try with Azure CLI
 
 ```cli
 # Create the Policy Definition (Subscription scope)
-definition=$(az policy definition create --name 'azure-virtual-machine-windows-server-hub' --display-name 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server' --description 'This policy assists with the governance of Azure Hybrid Use Benefit on on Azure VMs running Windows Server OSes.' --rules 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//Compute/azure-virtual-machine-windows-server-hub/azurepolicy.rules.json' --params 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//Compute/azure-virtual-machine-windows-server-hub/azurepolicy.parameters.json' --mode All)
+definition=$(az policy definition create --name 'azure-virtual-machine-windows-server-hub' --display-name 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server OS' --description 'This policy assists with the governance of Azure Hybrid Use Benefit on on Azure VMs running Windows Server OSes.' --rules 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//Compute/azure-virtual-machine-windows-server-hub/azurepolicy.rules.json' --params 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//Compute/azure-virtual-machine-windows-server-hub/azurepolicy.parameters.json' --mode All)
 
 # Set the scope to a resource group; may also be a subscription or management group
 scope=$(az group show --name 'YourResourceGroup')
@@ -39,5 +39,5 @@ scope=$(az group show --name 'YourResourceGroup')
 policyparam='{ "effect": { "value": "Audit" } }'
 
 # Create the Policy Assignment
-assignment=$(az policy assignment create --name 'azure-virtual-machine-windows-server-hub-assignment' --display-name 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server Assignment' --scope `echo $scope | jq '.id' -r` --policy `echo $definition | jq '.name' -r` --params "$policyparam")
+assignment=$(az policy assignment create --name 'azure-virtual-machine-windows-server-hub-assignment' --display-name 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server OS Assignment' --scope `echo $scope | jq '.id' -r` --policy `echo $definition | jq '.name' -r` --params "$policyparam")
 ```
