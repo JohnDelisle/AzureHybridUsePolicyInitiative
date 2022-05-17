@@ -21,8 +21,8 @@ foreach ($policy in $policies) {
 
     $readme = Get-Content -Path .\template-README.md
     $readme = $readme.Replace("@policyName@",           $policy.Name)
-    $readme = $readme.Replace("@policyDisplayName@",    $policySource.properties.displayName)
-    $readme = $readme.Replace("@policyDescription@",    $policySource.properties.description)
+    $readme = $readme.Replace("@policyDisplayName@",    $policySource.displayName)
+    $readme = $readme.Replace("@policyDescription@",    $policySource.description)
     $readme = $readme.Replace("@rawGhPolicyEncoded@",   [System.Web.HTTPUtility]::UrlEncode($rawGhPolicy))
     $readme = $readme.Replace("@rawGhPolicy@",          $rawGhPolicy)
     $readme = $readme.Replace("@rawGhParameters@",      $rawGhParameters)
