@@ -1,115 +1,109 @@
 {
-  "properties": {
-    "name": "azure-virtual-machine-windows-client-hub",
-    "displayName": "Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Client OSes",
-    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure VMs running Windows Client OSes (Windows 7, 10, 11, etc.)",
-    "mode": "all",
-    "metadata": {
-      "category": "Compute"
-    },
-    "parameters": {
-      "effect": {
-        "type": "string",
-        "defaultValue": "AuditIfNotExists",
-        "allowedValues": [
-          "AuditIfNotExists",
-          "DeployIfNotExists",
-          "Disabled"
-        ],
-        "metadata": {
-          "displayName": "Effect",
-          "description": "The effect determines what happens when the policy rule is evaluated"
-        }
+  "name": "azure-virtual-machine-windows-client-hub",
+  "displayName": "Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Client OSes",
+  "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure VMs running Windows Client OSes (Windows 7, 10, 11, etc.)",
+  "mode": "all",
+  "metadata": {
+    "category": "Compute"
+  },
+  "parameters": {
+    "effect": {
+      "type": "string",
+      "defaultValue": "AuditIfNotExists",
+      "allowedValues": [
+        "AuditIfNotExists",
+        "DeployIfNotExists",
+        "Disabled"
+      ],
+      "metadata": {
+        "displayName": "Effect",
+        "description": "The effect determines what happens when the policy rule is evaluated"
       }
+    }
+  },
+  "policyRule": {
+    "if": {
+      "allOf": [
+        {
+          "field": "type",
+          "in": [
+            "Microsoft.Compute/virtualMachines",
+            "Microsoft.Compute/VirtualMachineScaleSets"
+          ]
+        },
+        {
+          "field": "Microsoft.Compute/imagePublisher",
+          "equals": "MicrosoftWindowsDesktop"
+        },
+        {
+          "field": "Microsoft.Compute/imageOffer",
+          "like": "Windows-*"
+        },
+        {
+          "field": "Microsoft.Compute/licenseType",
+          "notEquals": "Windows_Client"
+        }
+      ]
     },
-    "policyRule": {
-      "if": {
-        "allOf": [
-          {
-            "field": "type",
-            "in": [
-              "Microsoft.Compute/virtualMachines",
-              "Microsoft.Compute/VirtualMachineScaleSets"
-            ]
-          },
-          {
-            "field": "Microsoft.Compute/imagePublisher",
-            "equals": "MicrosoftWindowsDesktop"
-          },
-          {
-            "field": "Microsoft.Compute/imageOffer",
-            "like": "Windows-*"
-          },
-          {
-            "field": "Microsoft.Compute/licenseType",
-            "notEquals": "Windows_Client"
-          }
-        ]
-      },
-      "then": {
-        "effect": "[parameters('effect')]",
-        "details": {
-          "roleDefinitionIds": [
-            "/providers/Microsoft.Authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c"
-          ],
-          "conflictEffect": "deny",
-          "existenceCondition": {
-            "anyOf": [
-              {
-                "field": "Microsoft.Compute/licenseType",
-                "equals": "Windows_Client"
-              },
-              {
-                "field": "Microsoft.Compute/licenseType",
-                "equals": "Windows_Server"
-              }
-            ]
-          },
-          "deployment": {
-            "properties": {
-              "mode": "incremental",
-              "template": {
-                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                "contentVersion": "1.0.0.0",
-                "parameters": {
-                  "name": {
-                    "type": "String"
-                  },
-                  "licenceType": {
-                    "defaultValue": "None",
-                    "type": "String",
-                    "allowedValues": [
-                      "None",
-                      "Windows_Client"
-                    ]
-                  }
-                },
-                "variables": {},
-                "resources": [
-                  {
-                    "type": "Microsoft.Compute/virtualMachines",
-                    "apiVersion": "2021-03-01",
-                    "name": "[parameters('name')]",
-                    "location": "[parameters('location')]",
-                    "properties": {
-                      "licenseType": "Windows_Client"
-                    }
-                  }
-                ],
-                "outputs": {
-                  "policy": {
-                    "type": "string",
-                    "value": "[concat('Set LicenseType of Windows Client VM ', parameters('name'), ' to Windows_Client')]"
-                  }
-                }
-              },
+    "then": {
+      "effect": "[parameters('effect')]",
+      "details": {
+        "type": "Microsoft.Compute/virtualMachines",
+        "roleDefinitionIds": [
+          "/providers/Microsoft.Authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c"
+        ],
+        "existenceCondition": {
+          "allOf": [
+            {
+              "field": "Microsoft.Compute/licenseType",
+              "equals": "Windows_Client"
+            }
+          ]
+        },
+        "deployment": {
+          "properties": {
+            "mode": "incremental",
+            "template": {
+              "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+              "contentVersion": "1.0.0.0",
               "parameters": {
                 "name": {
-                  "value": "[field('name')]"
+                  "type": "String"
                 },
-                "location": {
-                  "value": "[field('location')]"
+                "licenceType": {
+                  "defaultValue": "None",
+                  "type": "String",
+                  "allowedValues": [
+                    "None",
+                    "Windows_Client"
+                  ]
                 }
+              },
+              "variables": {},
+              "resources": [
+                {
+                  "type": "Microsoft.Compute/virtualMachines",
+                  "apiVersion": "2021-03-01",
+                  "name": "[parameters('name')]",
+                  "location": "[parameters('location')]",
+                  "properties": {
+                    "licenseType": "Windows_Client"
+                  }
+                }
+              ],
+              "outputs": {
+                "policy": {
+                  "type": "string",
+                  "value": "[concat('Set LicenseType of Windows Client VM ', parameters('name'), ' to Windows_Client')]"
+                }
+              }
+            },
+            "parameters": {
+              "name": {
+                "value": "[field('name')]"
+              },
+              "location": {
+                "value": "[field('location')]"
               }
             }
           }
