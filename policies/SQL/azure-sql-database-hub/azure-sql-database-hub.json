@@ -1,69 +1,69 @@
 {
-    "type": "Microsoft.Authorization/policyDefinitions",
-    "name": "azure-sql-database-hub",
-    "properties": {
-        "displayName": "Hybrid Use Benefit (HUB) for SQL Database",
-        "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Databases.",
-        "mode": "All",
-        "metadata": {
-            "category": "SQL"
-        }
-    },
-    "parameters": {
-        "effect": {
-            "type": "string",
-            "defaultValue": "Audit",
-            "allowedValues": [
-                "AuditIfNotExists",
-                "DeployIfNotExists",
-                "Disabled"
-            ],
-            "metadata": {
-                "displayName": "Effect",
-                "description": "The effect determines what happens when the policy rule is evaluated to match"
-            }
-        }
-    },
-    "policyRule": {
-        "if": {
-            "allOf": [
-                {
-                    "field": "type",
-                    "equals": "Microsoft.Sql/servers/databases"
-                },
-                {
-                    "field": "Microsoft.Sql/servers/databases/currentSku.tier",
-                    "in": [
-                        "GeneralPurpose",
-                        "Hyperscale",
-                        "BusinessCritical"
-                    ]
-                },
-                {
-                    "field": "Microsoft.Sql/servers/databases/currentSku.name",
-                    "notContains": "GP_S"
-                },
-                {
-                    "field": "Microsoft.Sql/servers/databases/currentSku.name",
-                    "notEquals": "ElasticPool"
-                }
-            ]
-        },
-        "then": {
-            "effect": "[parameters('effect')]",
-            "details": {
-                "roleDefinitionIds": [
-                    "/providers/Microsoft.Authorization/roleDefinitions/9b7fa17d-e63e-47b0-bb0a-15c516ac86ec"
-                ],
-                "conflictEffect": "deny",
-                "operations": [
-                    {
-                        "operation": "addOrReplace",
-                        "field": "Microsoft.Sql/servers/databases/licenseType",
-                        "equals": "BasePrice"
-                    }
-                ]
-            }
-        }
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "name": "azure-sql-database-hub",
+  "properties": {
+    "displayName": "Hybrid Use Benefit (HUB) for SQL Database",
+    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Databases.",
+    "mode": "All",
+    "metadata": {
+      "category": "SQL"
     }
+  },
+  "parameters": {
+    "effect": {
+      "type": "string",
+      "defaultValue": "Audit",
+      "allowedValues": [
+        "AuditIfNotExists",
+        "DeployIfNotExists",
+        "Disabled"
+      ],
+      "metadata": {
+        "displayName": "Effect",
+        "description": "The effect determines what happens when the policy rule is evaluated to match"
+      }
+    }
+  },
+  "policyRule": {
+    "if": {
+      "allOf": [
+        {
+          "field": "type",
+          "equals": "Microsoft.Sql/servers/databases"
+        },
+        {
+          "field": "Microsoft.Sql/servers/databases/currentSku.tier",
+          "in": [
+            "GeneralPurpose",
+            "Hyperscale",
+            "BusinessCritical"
+          ]
+        },
+        {
+          "field": "Microsoft.Sql/servers/databases/currentSku.name",
+          "notContains": "GP_S"
+        },
+        {
+          "field": "Microsoft.Sql/servers/databases/currentSku.name",
+          "notEquals": "ElasticPool"
+        }
+      ]
+    },
+    "then": {
+      "effect": "[parameters('effect')]",
+      "details": {
+        "roleDefinitionIds": [
+          "/providers/Microsoft.Authorization/roleDefinitions/9b7fa17d-e63e-47b0-bb0a-15c516ac86ec"
+        ],
+        "conflictEffect": "deny",
+        "operations": [
+          {
+            "operation": "addOrReplace",
+            "field": "Microsoft.Sql/servers/databases/licenseType",
+            "equals": "BasePrice"
+          }
+        ]
+      }
+    }
+  }
 }

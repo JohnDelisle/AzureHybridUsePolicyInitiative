@@ -1,9 +1,9 @@
 {
   "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "azure-virtual-machine-windows-server-hub",
+  "name": "azure-virtual-machine-windows-client-hub",
   "properties": {
-    "displayName": "Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server",
-    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on on Azure VMs running Windows Server OSes.",
+    "displayName": "Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Client",
+    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure VMs running Windows Client OSes.",
     "mode": "All",
     "metadata": {
       "category": "Compute"
@@ -36,15 +36,15 @@
         },
         {
           "field": "Microsoft.Compute/imagePublisher",
-          "equals": "MicrosoftWindowsServer"
+          "equals": "MicrosoftWindowsDesktop"
         },
         {
           "field": "Microsoft.Compute/imageOffer",
-          "equals": "WindowsServer"
+          "like": "Windows-*"
         },
         {
           "field": "Microsoft.Compute/licenseType",
-          "notEquals": "Windows_Server"
+          "notEquals": "Windows_Client"
         }
       ]
     },
@@ -59,7 +59,7 @@
           {
             "operation": "addOrReplace",
             "field": "Microsoft.Compute/licenseType",
-            "value": "Windows_Server"
+            "value": "Windows_Client"
           }
         ]
       }

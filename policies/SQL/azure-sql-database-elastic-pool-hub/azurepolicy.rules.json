@@ -1,0 +1,33 @@
+{
+  "if": {
+    "allOf": [
+      {
+        "field": "type",
+        "equals": "Microsoft.Sql/servers/elasticPools"
+      },
+      {
+        "field": "Microsoft.Sql/servers/elasticpools/sku.tier",
+        "in": [
+          "BusinessCritical",
+          "GeneralPurpose"
+        ]
+      }
+    ]
+  },
+  "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+      "roleDefinitionIds": [
+        "/providers/Microsoft.Authorization/roleDefinitions/9b7fa17d-e63e-47b0-bb0a-15c516ac86ec"
+      ],
+      "conflictEffect": "deny",
+      "operations": [
+        {
+          "operation": "addOrReplace",
+          "field": "Microsoft.Sql/servers/elasticpools/licenseType",
+          "equals": "BasePrice"
+        }
+      ]
+    }
+  }
+}

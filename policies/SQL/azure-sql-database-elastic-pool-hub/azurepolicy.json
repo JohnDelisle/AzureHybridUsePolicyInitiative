@@ -1,9 +1,9 @@
 {
   "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "azure-sql-managed-instance-hub",
+  "name": "azure-sql-database-elastic-pool-hub",
   "properties": {
-    "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Managed Instance",
-    "description": "This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Managed Instance.",
+    "displayName": "Hybrid Use Benefit (HUB) for SQL Database Elastic Pool",
+    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Database in Elastic Pools.",
     "mode": "All",
     "metadata": {
       "category": "SQL"
@@ -14,8 +14,8 @@
       "type": "string",
       "defaultValue": "Audit",
       "allowedValues": [
-        "Audit",
-        "Modify",
+        "AuditIfNotExists",
+        "DeployIfNotExists",
         "Disabled"
       ],
       "metadata": {
@@ -29,11 +29,14 @@
       "allOf": [
         {
           "field": "type",
-          "equals": "Microsoft.Sql/ManagedInstances"
+          "equals": "Microsoft.Sql/servers/elasticPools"
         },
         {
-          "field": "Microsoft.Sql/ManagedInstances/LicenseType",
-          "NotEquals": "BasePrice"
+          "field": "Microsoft.Sql/servers/elasticpools/sku.tier",
+          "in": [
+            "BusinessCritical",
+            "GeneralPurpose"
+          ]
         }
       ]
     },
@@ -41,14 +44,14 @@
       "effect": "[parameters('effect')]",
       "details": {
         "roleDefinitionIds": [
-          "/providers/Microsoft.Authorization/roleDefinitions/4939a1f6-9ae0-4e48-a1e0-f2cbe897382d"
+          "/providers/Microsoft.Authorization/roleDefinitions/9b7fa17d-e63e-47b0-bb0a-15c516ac86ec"
         ],
         "conflictEffect": "deny",
         "operations": [
           {
             "operation": "addOrReplace",
-            "field": "Microsoft.Sql/ManagedInstances/LicenseType",
-            "NotEquals": "BasePrice"
+            "field": "Microsoft.Sql/servers/elasticpools/licenseType",
+            "equals": "BasePrice"
           }
         ]
       }

@@ -1,9 +1,9 @@
 {
   "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "azure-sql-database-elastic-pool-hub",
+  "name": "azure-sql-database-hub",
   "properties": {
-    "displayName": "Hybrid Use Benefit (HUB) for SQL Database Elastic Pool",
-    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Database in Elastic Pools.",
+    "displayName": "Hybrid Use Benefit (HUB) for SQL Database",
+    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Databases.",
     "mode": "All",
     "metadata": {
       "category": "SQL"
@@ -29,14 +29,23 @@
       "allOf": [
         {
           "field": "type",
-          "equals": "Microsoft.Sql/servers/elasticPools"
+          "equals": "Microsoft.Sql/servers/databases"
         },
         {
-          "field": "Microsoft.Sql/servers/elasticpools/sku.tier",
+          "field": "Microsoft.Sql/servers/databases/currentSku.tier",
           "in": [
-            "BusinessCritical",
-            "GeneralPurpose"
+            "GeneralPurpose",
+            "Hyperscale",
+            "BusinessCritical"
           ]
+        },
+        {
+          "field": "Microsoft.Sql/servers/databases/currentSku.name",
+          "notContains": "GP_S"
+        },
+        {
+          "field": "Microsoft.Sql/servers/databases/currentSku.name",
+          "notEquals": "ElasticPool"
         }
       ]
     },
@@ -50,7 +59,7 @@
         "operations": [
           {
             "operation": "addOrReplace",
-            "field": "Microsoft.Sql/servers/elasticpools/licenseType",
+            "field": "Microsoft.Sql/servers/databases/licenseType",
             "equals": "BasePrice"
           }
         ]

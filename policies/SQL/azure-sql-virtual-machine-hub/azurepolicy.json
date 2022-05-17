@@ -1,12 +1,12 @@
 {
   "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "azure-virtual-machine-windows-server-hub",
+  "name": "azure-sql-virtual-machine-hub",
   "properties": {
-    "displayName": "Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server",
-    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on on Azure VMs running Windows Server OSes.",
+    "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Virtual Machines",
+    "description": "This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Virtual Machines.",
     "mode": "All",
     "metadata": {
-      "category": "Compute"
+      "category": "SQL"
     }
   },
   "parameters": {
@@ -29,22 +29,18 @@
       "allOf": [
         {
           "field": "type",
+          "equals": "Microsoft.SqlVirtualMachine/SqlVirtualMachines"
+        },
+        {
+          "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlImageSku",
           "in": [
-            "Microsoft.Compute/virtualMachines",
-            "Microsoft.Compute/VirtualMachineScaleSets"
+            "Standard",
+            "Enterprise"
           ]
         },
         {
-          "field": "Microsoft.Compute/imagePublisher",
-          "equals": "MicrosoftWindowsServer"
-        },
-        {
-          "field": "Microsoft.Compute/imageOffer",
-          "equals": "WindowsServer"
-        },
-        {
-          "field": "Microsoft.Compute/licenseType",
-          "notEquals": "Windows_Server"
+          "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlServerLicenseType",
+          "notEquals": "AHUB"
         }
       ]
     },
@@ -58,8 +54,8 @@
         "operations": [
           {
             "operation": "addOrReplace",
-            "field": "Microsoft.Compute/licenseType",
-            "value": "Windows_Server"
+            "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlServerLicenseType",
+            "value": "AHUB"
           }
         ]
       }
