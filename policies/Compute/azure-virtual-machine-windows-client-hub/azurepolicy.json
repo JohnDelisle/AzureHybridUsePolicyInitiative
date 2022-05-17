@@ -12,9 +12,8 @@
         "type": "string",
         "defaultValue": "Audit",
         "allowedValues": [
-          "Audit",
-          "Modify",
-          "Deny",
+          "AuditIfNotExists",
+          "DeployIfNotExists",
           "Disabled"
         ],
         "metadata": {
