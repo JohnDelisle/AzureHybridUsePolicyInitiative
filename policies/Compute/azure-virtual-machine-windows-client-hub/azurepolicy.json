@@ -66,13 +66,8 @@
                 "name": {
                   "type": "String"
                 },
-                "licenceType": {
-                  "defaultValue": "None",
-                  "type": "String",
-                  "allowedValues": [
-                    "None",
-                    "Windows_Client"
-                  ]
+                "location": {
+                  "type": "String"
                 }
               },
               "variables": {},
