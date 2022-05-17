@@ -39,52 +39,52 @@
             "field": "Microsoft.Compute/licenseType",
             "equals": "Windows_Server"
           }
-        ],
-        "deployment": {
-          "properties": {
-            "mode": "incremental",
-            "template": {
-              "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-              "contentVersion": "1.0.0.0",
-              "parameters": {
-                "name": {
-                  "type": "String"
-                },
-                "licenceType": {
-                  "defaultValue": "None",
-                  "type": "String",
-                  "allowedValues": [
-                    "None",
-                    "Windows_Client"
-                  ]
-                }
-              },
-              "variables": {},
-              "resources": [
-                {
-                  "type": "Microsoft.Compute/virtualMachines",
-                  "apiVersion": "2021-03-01",
-                  "name": "[parameters('name')]",
-                  "location": "[parameters('location')]",
-                  "properties": {
-                    "licenseType": "Windows_Client"
-                  }
-                }
-              ],
-              "outputs": {
-                "policy": {
-                  "type": "string",
-                  "value": "[concat('Set LicenseType of Windows Client VM ', parameters('name'), ' to Windows_Client')]"
-                }
-              }
-            },
+        ]
+      },
+      "deployment": {
+        "properties": {
+          "mode": "incremental",
+          "template": {
+            "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
             "parameters": {
               "name": {
-                "value": "[field('name')]"
+                "type": "String"
               },
-              "location": {
-                "value": "[field('location')]"
+              "licenceType": {
+                "defaultValue": "None",
+                "type": "String",
+                "allowedValues": [
+                  "None",
+                  "Windows_Client"
+                ]
               }
+            },
+            "variables": {},
+            "resources": [
+              {
+                "type": "Microsoft.Compute/virtualMachines",
+                "apiVersion": "2021-03-01",
+                "name": "[parameters('name')]",
+                "location": "[parameters('location')]",
+                "properties": {
+                  "licenseType": "Windows_Client"
+                }
+              }
+            ],
+            "outputs": {
+              "policy": {
+                "type": "string",
+                "value": "[concat('Set LicenseType of Windows Client VM ', parameters('name'), ' to Windows_Client')]"
+              }
+            }
+          },
+          "parameters": {
+            "name": {
+              "value": "[field('name')]"
+            },
+            "location": {
+              "value": "[field('location')]"
             }
           }
         }
