@@ -10,15 +10,11 @@
       },
       {
         "field": "Microsoft.Compute/imagePublisher",
-        "equals": "MicrosoftWindowsDesktop"
+        "equals": "MicrosoftWindowsServer"
       },
       {
         "field": "Microsoft.Compute/imageOffer",
-        "like": "Windows-*"
-      },
-      {
-        "field": "Microsoft.Compute/licenseType",
-        "notEquals": "Windows_Server"
+        "equals": "WindowsServer"
       }
     ]
   },
