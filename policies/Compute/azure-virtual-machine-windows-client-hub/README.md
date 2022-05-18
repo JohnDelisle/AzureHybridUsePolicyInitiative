@@ -26,12 +26,13 @@ $policyParameters = '{ "effect": { "value": "AuditIfNotExists" } }'
 $scope = Get-AzResourceGroup -Name 'YourResourceGroup' 
 
 # Create the Policy Assignment
-$policyAssignment = New-AzPolicyAssignment -Name 'azure-virtual-machine-windows-client-hub-assignment' -DisplayName 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Client OSes Assignment' -Scope $scope.ResourceId -PolicyDefinition $policyDefinition -PolicyParameter $policyParameters -IdentityType SystemAssigned -Location 'LocationForSystemAssignmedManagedIdentity'
+$spLocation = 'YourLocationForSystemAssignmedManagedIdentity'
+$policyAssignment = New-AzPolicyAssignment -Name 'azure-virtual-machine-windows-client-hub-assignment' -DisplayName 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Client OSes Assignment' -Scope $scope.ResourceId -PolicyDefinition $policyDefinition -PolicyParameter $policyParameters -IdentityType SystemAssigned -Location $spLocation
 
 # Create a Role Assignment
-# Grants the System Assigned Managed Identity (created duing Policy Assignement) with the RBAC Role (specified in the policy) to the Scope (specified in $scope above).
-# This enables Azure Policy to make changes to resources when the "DeployIfNotExists" effect is used.
-$roleAssignment = $policyDefinition.Properties.PolicyRule.then.details.roleDefinitionIds | ForEach-Object { New-AzRoleAssignment -PrincipalId $policyAssignment.Identity.PrincipalId -Scope $scope.ResourceId -RoleDefinitionId $_.Split('/')[-1] }
+# Grants the System Assigned Managed Identity (created duing Policy Assignement) with the RBAC Role (specified in the policy) to the Scope (specified in $scope above), 
+# enabling Azure Policy to make changes to resources when the "DeployIfNotExists" effect is used.
+$roleAssignment = New-AzRoleAssignment -PrincipalId $policyAssignment.Identity.PrincipalId -Scope $scope.ResourceId -RoleDefinitionId $policyDefinition.Properties.PolicyRule.then.details.roleDefinitionIds[0].Split('/')[-1]
 
 ````
 
@@ -51,15 +52,13 @@ policyParameters='{ "effect": { "value": "AuditIfNotExists" } }'
 scope=$(az group show --name 'YourResourceGroup')
 
 # Create the Policy Assignment
-policyAssignment=$(az policy assignment create --name 'azure-virtual-machine-windows-client-hub-assignment' --display-name 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Client OSes Assignment' --scope `echo $scope | jq '.id' -r` --policy `echo $policyDefinition | jq '.name' -r` --params "$policyParameters")
-
-# Create a Role Assignment
-# Grants the System Assigned Managed Identity (created duing Policy Assignement) with the RBAC Role (specified in the policy) to the Scope (specified in $scope above).
-# This enables Azure Policy to make changes to resources when the "DeployIfNotExists" effect is used.
-spId=$(echo $policyAssignment | jq '.Identity.PrincipalId' -r)
+# In addition to the creating the Policy Assignment, this creates and grants a System Assigned Managed Identity with the RBAC Role (specified in the policy) to the Scope (specified in $scope above),
+# enabling Azure Policy to make changes to resources when the "DeployIfNotExists" effect is used.
+spLocation = 'YourLocationForSystemAssignmedManagedIdentity'
 scopeId=$(echo $scope | jq '.id' -r)
-for roleId in $(echo $policyDefinition | jq '.Properties.PolicyRule.then.details.roleDefinitionIds' -r); do
-    az role assignment create --assignee $spId --role $roleId --scope $scopeId
-done
+roleId=$(echo $policyDefinition | jq '.Properties.PolicyRule.then.details.roleDefinitionIds' -r)
+policyDefinitionName=$(echo $policyDefinition | jq '.name' -r)
+scopeId=$(echo $scope | jq '.id' -r)
+policyAssignment=$(az policy assignment create --name 'azure-virtual-machine-windows-client-hub-assignment' --display-name 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Client OSes Assignment' --scope "$scopeId" --policy "$policyDefinitionName" --params "$policyParameters" --mi-system-assigned --location "$spLocation" --identity-scope "$scopeId" --role "$roleId")
 
 ```
