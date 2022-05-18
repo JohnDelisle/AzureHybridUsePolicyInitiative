@@ -51,7 +51,7 @@ policyParameters='{ "effect": { "value": "AuditIfNotExists" } }'
 scope=$(az group show --name 'YourResourceGroup')
 
 # Create the Policy Assignment
-policyAssignment=$(az policy assignment create --name 'azure-sql-virtual-machine-hub-assignment' --display-name 'Hybrid Use Benefit (HUB) for Azure SQL Virtual Machines Assignment' --scope `echo $scope | jq '.id' -r` --policy `echo $definition | jq '.name' -r` --params "$policyparam")
+policyAssignment=$(az policy assignment create --name 'azure-sql-virtual-machine-hub-assignment' --display-name 'Hybrid Use Benefit (HUB) for Azure SQL Virtual Machines Assignment' --scope `echo $scope | jq '.id' -r` --policy `echo $policyDefinition | jq '.name' -r` --params "$policyParameters")
 
 # Create a Role Assignment
 # Grants the System Assigned Managed Identity (created duing Policy Assignement) with the RBAC Role (specified in the policy) to the Scope (specified in $scope above).
