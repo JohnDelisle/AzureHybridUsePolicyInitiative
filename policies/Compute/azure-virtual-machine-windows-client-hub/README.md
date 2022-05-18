@@ -56,7 +56,7 @@ scope=$(az group show --name 'YourResourceGroup')
 # enabling Azure Policy to make changes to resources when the "DeployIfNotExists" effect is used.
 spLocation='YourLocationForSystemAssignmedManagedIdentity'
 scopeId=$(echo $scope | jq '.id' -r)
-roleId=$(echo $policyDefinition | jq '.Properties.PolicyRule.then.details.roleDefinitionIds' -r)
+roleId=$(echo $policyDefinition | jq '.policyRule.then.details.roleDefinitionIds[0]' -r)
 policyDefinitionName=$(echo $policyDefinition | jq '.name' -r)
 scopeId=$(echo $scope | jq '.id' -r)
 policyAssignment=$(az policy assignment create --name 'azure-virtual-machine-windows-client-hub-assignment' --display-name 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Client OSes Assignment' --scope "$scopeId" --policy "$policyDefinitionName" --params "$policyParameters" --mi-system-assigned --location "$spLocation" --identity-scope "$scopeId" --role "$roleId")
