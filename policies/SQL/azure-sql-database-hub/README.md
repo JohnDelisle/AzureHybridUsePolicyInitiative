@@ -54,7 +54,7 @@ scope=$(az group show --name 'YourResourceGroup')
 # Create the Policy Assignment
 # In addition to the creating the Policy Assignment, this creates and grants a System Assigned Managed Identity with the RBAC Role (specified in the policy) to the Scope (specified in $scope above),
 # enabling Azure Policy to make changes to resources when the "DeployIfNotExists" effect is used.
-spLocation = 'YourLocationForSystemAssignmedManagedIdentity'
+spLocation='YourLocationForSystemAssignmedManagedIdentity'
 scopeId=$(echo $scope | jq '.id' -r)
 roleId=$(echo $policyDefinition | jq '.Properties.PolicyRule.then.details.roleDefinitionIds' -r)
 policyDefinitionName=$(echo $policyDefinition | jq '.name' -r)
