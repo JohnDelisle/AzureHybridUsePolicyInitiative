@@ -11,27 +11,67 @@
           "Standard",
           "Enterprise"
         ]
-      },
-      {
-        "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlServerLicenseType",
-        "notEquals": "AHUB"
       }
     ]
   },
   "then": {
     "effect": "[parameters('effect')]",
     "details": {
+      "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
       "roleDefinitionIds": [
         "/providers/Microsoft.Authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c"
       ],
-      "conflictEffect": "deny",
-      "operations": [
-        {
-          "operation": "addOrReplace",
-          "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlServerLicenseType",
-          "value": "AHUB"
+      "existenceCondition": {
+        "allOf": [
+          {
+            "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlServerLicenseType",
+            "Equals": "AHUB"
+          }
+        ]
+      },
+      "deployment": {
+        "properties": {
+          "mode": "incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+              "name": {
+                "type": "String"
+              },
+              "location": {
+                "type": "String"
+              }
+            },
+            "variables": {},
+            "resources": [
+              {
+                "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
+                "apiVersion": "2017-03-01-preview",
+                "name": "[parameters('name')]",
+                "location": "[parameters('location')]",
+                "properties": {
+                  "sqlServerLicenseType": "AHUB"
+                }
+              }
+            ],
+            "outputs": {
+              "policy": {
+                "type": "string",
+                "value": "[concat('Set sqlServerLicenseType of Azure SQL Virtual Machine ', parameters('name'), ' to AHUB')]"
+              }
+            }
+          },
+          "parameters": {
+            "name": {
+              "value": "[field('name')]"
+            },
+            "location": {
+              "value": "[field('location')]"
+            }
+          }
         }
-      ]
+      }
     }
   }
 }

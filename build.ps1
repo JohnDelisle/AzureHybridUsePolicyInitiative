@@ -1,5 +1,5 @@
 
-# used to break monolithic source policies into the files required per MS https://github.com/Azure/azure-policy/tree/master/1-contribution-guide
+# used to break monolithic source policies into the files as required per MS https://github.com/Azure/azure-policy/tree/master/1-contribution-guide
 
 $policies = @()
 $policies += Get-ChildItem -Path .\policies\SQL\*
@@ -29,5 +29,4 @@ foreach ($policy in $policies) {
     $readme = $readme.Replace("@rawGhRules@",           $rawGhRules)
 
     $readme | Out-File -Path "$($policy.FullName)\README.md"
-
 }

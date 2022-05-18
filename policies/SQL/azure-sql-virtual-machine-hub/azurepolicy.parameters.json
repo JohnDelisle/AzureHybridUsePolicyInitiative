@@ -1,15 +1,15 @@
 {
   "effect": {
     "type": "string",
-    "defaultValue": "Audit",
+    "defaultValue": "AuditIfNotExists",
     "allowedValues": [
-      "Audit",
-      "Modify",
+      "AuditIfNotExists",
+      "DeployIfNotExists",
       "Disabled"
     ],
     "metadata": {
       "displayName": "Effect",
-      "description": "The effect determines what happens when the policy rule is evaluated to match"
+      "description": "The effect determines what happens when the policy rule is evaluated"
     }
   }
 }

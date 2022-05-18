@@ -19,8 +19,11 @@ $definition = New-AzPolicyDefinition -Name 'azure-sql-managed-instance-hub' -Dis
 # Set the scope to a resource group; may also be a subscription or management group
 $scope = Get-AzResourceGroup -Name 'YourResourceGroup'
 
-# Set the Policy Parameter (JSON format)
-$policyparam = '{ "effect": { "value": "Audit" } }'
+# Set the Policy Parameter (JSON format) to meet your needs.
+# "AuditIfNotExists" -- Audit and report on resources that are non-compliant
+# "DeployIfNotExists" -- Automatically fix resources that are non-compliant
+# "Disabled" -- Disable policy
+$policyparam = '{ "effect": { "value": "AuditIfNotExists" } }'
 
 # Create the Policy Assignment
 $assignment = New-AzPolicyAssignment -Name 'azure-sql-managed-instance-hub-assignment' -DisplayName ' Assignment' -Scope $scope.ResourceId -PolicyDefinition $definition -PolicyParameter $policyparam
@@ -36,7 +39,10 @@ definition=$(az policy definition create --name 'azure-sql-managed-instance-hub'
 scope=$(az group show --name 'YourResourceGroup')
 
 # Set the Policy Parameter (JSON format)
-policyparam='{ "effect": { "value": "Audit" } }'
+# "AuditIfNotExists" -- Audit and report on resources that are non-compliant
+# "DeployIfNotExists" -- Automatically fix resources that are non-compliant
+# "Disabled" -- Disable policy
+policyparam='{ "effect": { "value": "AuditIfNotExists" } }'
 
 # Create the Policy Assignment
 assignment=$(az policy assignment create --name 'azure-sql-managed-instance-hub-assignment' --display-name ' Assignment' --scope `echo $scope | jq '.id' -r` --policy `echo $definition | jq '.name' -r` --params "$policyparam")

@@ -1,6 +1,6 @@
-# 
+# Hybrid Use Benefit (HUB) for Azure SQL Virtual Machines
 
-
+This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Virtual Machines.
 
 ## Azure Policy Docs
 
@@ -14,30 +14,36 @@ See Microsoft documentation for background and use of Azure Policy samples [docs
 
 ````powershell
 # Create the Policy Definition (Subscription scope)
-$definition = New-AzPolicyDefinition -Name 'azure-sql-virtual-machine-hub' -DisplayName '' -description '' -Policy 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-virtual-machine-hub/azurepolicy.rules.json' -Parameter 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-virtual-machine-hub/azurepolicy.parameters.json' -Mode All
+$definition = New-AzPolicyDefinition -Name 'azure-sql-virtual-machine-hub' -DisplayName 'Hybrid Use Benefit (HUB) for Azure SQL Virtual Machines' -description 'This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Virtual Machines.' -Policy 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-virtual-machine-hub/azurepolicy.rules.json' -Parameter 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-virtual-machine-hub/azurepolicy.parameters.json' -Mode All
 
 # Set the scope to a resource group; may also be a subscription or management group
 $scope = Get-AzResourceGroup -Name 'YourResourceGroup'
 
-# Set the Policy Parameter (JSON format)
-$policyparam = '{ "effect": { "value": "Audit" } }'
+# Set the Policy Parameter (JSON format) to meet your needs.
+# "AuditIfNotExists" -- Audit and report on resources that are non-compliant
+# "DeployIfNotExists" -- Automatically fix resources that are non-compliant
+# "Disabled" -- Disable policy
+$policyparam = '{ "effect": { "value": "AuditIfNotExists" } }'
 
 # Create the Policy Assignment
-$assignment = New-AzPolicyAssignment -Name 'azure-sql-virtual-machine-hub-assignment' -DisplayName ' Assignment' -Scope $scope.ResourceId -PolicyDefinition $definition -PolicyParameter $policyparam
+$assignment = New-AzPolicyAssignment -Name 'azure-sql-virtual-machine-hub-assignment' -DisplayName 'Hybrid Use Benefit (HUB) for Azure SQL Virtual Machines Assignment' -Scope $scope.ResourceId -PolicyDefinition $definition -PolicyParameter $policyparam
 ````
 
 ## Try with Azure CLI
 
 ```cli
 # Create the Policy Definition (Subscription scope)
-definition=$(az policy definition create --name 'azure-sql-virtual-machine-hub' --display-name '' --description '' --rules 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-virtual-machine-hub/azurepolicy.rules.json' --params 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-virtual-machine-hub/azurepolicy.parameters.json' --mode All)
+definition=$(az policy definition create --name 'azure-sql-virtual-machine-hub' --display-name 'Hybrid Use Benefit (HUB) for Azure SQL Virtual Machines' --description 'This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Virtual Machines.' --rules 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-virtual-machine-hub/azurepolicy.rules.json' --params 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-virtual-machine-hub/azurepolicy.parameters.json' --mode All)
 
 # Set the scope to a resource group; may also be a subscription or management group
 scope=$(az group show --name 'YourResourceGroup')
 
 # Set the Policy Parameter (JSON format)
-policyparam='{ "effect": { "value": "Audit" } }'
+# "AuditIfNotExists" -- Audit and report on resources that are non-compliant
+# "DeployIfNotExists" -- Automatically fix resources that are non-compliant
+# "Disabled" -- Disable policy
+policyparam='{ "effect": { "value": "AuditIfNotExists" } }'
 
 # Create the Policy Assignment
-assignment=$(az policy assignment create --name 'azure-sql-virtual-machine-hub-assignment' --display-name ' Assignment' --scope `echo $scope | jq '.id' -r` --policy `echo $definition | jq '.name' -r` --params "$policyparam")
+assignment=$(az policy assignment create --name 'azure-sql-virtual-machine-hub-assignment' --display-name 'Hybrid Use Benefit (HUB) for Azure SQL Virtual Machines Assignment' --scope `echo $scope | jq '.id' -r` --policy `echo $definition | jq '.name' -r` --params "$policyparam")
 ```
