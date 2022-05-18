@@ -37,7 +37,7 @@ $roleAssignment = $policyDefinition.Properties.PolicyRule.then.details.roleDefin
 
 ## Try with Azure CLI
 
-```cli
+```bash
 # Create the Policy Definition (Subscription scope)
 policyDefinition=$(az policy definition create --name 'azure-virtual-machine-windows-client-hub' --display-name 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Client OSes' --description 'This policy assists with the governance of Azure Hybrid Use Benefit on Azure VMs running Windows Client OSes (Windows 7, 10, 11, etc.)' --rules 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//Compute/azure-virtual-machine-windows-client-hub/azurepolicy.rules.json' --params 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//Compute/azure-virtual-machine-windows-client-hub/azurepolicy.parameters.json' --mode All)
 

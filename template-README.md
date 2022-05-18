@@ -37,7 +37,7 @@ $roleAssignment = $policyDefinition.Properties.PolicyRule.then.details.roleDefin
 
 ## Try with Azure CLI
 
-```cli
+```bash
 # Create the Policy Definition (Subscription scope)
 policyDefinition=$(az policy definition create --name '@policyName@' --display-name '@policyDisplayName@' --description '@policyDescription@' --rules '@rawGhRules@' --params '@rawGhParameters@' --mode All)
 

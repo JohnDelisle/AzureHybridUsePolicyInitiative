@@ -37,7 +37,7 @@ $roleAssignment = $policyDefinition.Properties.PolicyRule.then.details.roleDefin
 
 ## Try with Azure CLI
 
-```cli
+```bash
 # Create the Policy Definition (Subscription scope)
 policyDefinition=$(az policy definition create --name 'azure-sql-database-hub' --display-name '' --description '' --rules 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-database-hub/azurepolicy.rules.json' --params 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-database-hub/azurepolicy.parameters.json' --mode All)
 
