@@ -98,7 +98,7 @@
                 "value": "[field('location')]"
               },
               "virtualMachineResourceId": {
-                "value": "[field('virtualMachineResourceId')]"
+                "value": "[field('Microsoft.SqlVirtualMachine/SqlVirtualMachines/virtualMachineResourceId')]"
               }
             }
           }
