@@ -5,7 +5,8 @@
     "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Database in Elastic Pools.",
     "mode": "All",
     "metadata": {
-      "category": "SQL"
+      "category": "SQL",
+      "NonComplianceMessage": "Azure SQL Databases in Elastic Pools must be configured to use Hybrid Use Benefit licensing"
     },
     "parameters": {
       "effect": {

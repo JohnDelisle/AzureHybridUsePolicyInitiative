@@ -5,7 +5,8 @@
     "description": "This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Managed Instance.",
     "mode": "All",
     "metadata": {
-      "category": "SQL"
+      "category": "SQL",
+      "NonComplianceMessage": "Azure SQL Managed Instance must be configured to use Hybrid Use Benefit licensing"
     },
     "parameters": {
       "effect": {

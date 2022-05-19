@@ -4,7 +4,8 @@
   "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure VMs running Windows Client OSes (Windows 7, 10, 11, etc.)",
   "mode": "all",
   "metadata": {
-    "category": "Compute"
+    "category": "Compute",
+    "NonComplianceMessage": "Azure Virtual Machines running Windows Client OSes must be configured to use Hybrid Use Benefit licensing"
   },
   "parameters": {
     "effect": {

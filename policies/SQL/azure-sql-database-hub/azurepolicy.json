@@ -5,7 +5,8 @@
     "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Databases.",
     "mode": "All",
     "metadata": {
-      "category": "SQL"
+      "category": "SQL",
+      "NonComplianceMessage": "Azure SQL Databases must be configured to use Hybrid Use Benefit licensing"
     },
     "parameters": {
       "effect": {

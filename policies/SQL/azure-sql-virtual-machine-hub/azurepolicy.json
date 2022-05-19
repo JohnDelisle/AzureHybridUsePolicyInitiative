@@ -4,7 +4,8 @@
   "description": "This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Virtual Machines.",
   "mode": "All",
   "metadata": {
-    "category": "SQL"
+    "category": "SQL",
+    "NonComplianceMessage": "Azure SQL Virtual Machines must be configured to use Hybrid Use Benefit licensing"
   },
   "parameters": {
     "effect": {
@@ -69,11 +70,12 @@
               "variables": {},
               "resources": [
                 {
-                  "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
-                  "apiVersion": "2017-03-01-preview",
+                  "type": "Microsoft.SqlVirtualMachine/sqlVirtualMachines",
+                  "apiVersion": "2021-11-01-preview",
                   "name": "[parameters('name')]",
                   "location": "[parameters('location')]",
                   "properties": {
+                    "virtualMachineResourceId": "[parameters('virtualMachineResourceId')]",
                     "sqlServerLicenseType": "AHUB"
                   }
                 }
@@ -91,6 +93,9 @@
               },
               "location": {
                 "value": "[field('location')]"
+              },
+              "virtualMachineResourceId": {
+                "value": "[field('virtualMachineResourceId')]"
               }
             }
           }
