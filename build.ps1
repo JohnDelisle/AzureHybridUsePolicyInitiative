@@ -20,13 +20,14 @@ foreach ($policy in $policies) {
     $rawGhRules      = "$gh/$($policy.Parent.Name)/$($policy.Name)/azurepolicy.rules.json"
 
     $readme = Get-Content -Path .\template-README.md
-    $readme = $readme.Replace("@policyName@",           $policy.Name)
-    $readme = $readme.Replace("@policyDisplayName@",    $policySource.displayName)
-    $readme = $readme.Replace("@policyDescription@",    $policySource.description)
-    $readme = $readme.Replace("@rawGhPolicyEncoded@",   [System.Web.HTTPUtility]::UrlEncode($rawGhPolicy))
-    $readme = $readme.Replace("@rawGhPolicy@",          $rawGhPolicy)
-    $readme = $readme.Replace("@rawGhParameters@",      $rawGhParameters)
-    $readme = $readme.Replace("@rawGhRules@",           $rawGhRules)
+    $readme = $readme.Replace("@policyName@",                       $policy.Name)
+    $readme = $readme.Replace("@policyDisplayName@",                $policySource.displayName)
+    $readme = $readme.Replace("@policyDescription@",                $policySource.description)
+    $readme = $readme.Replace("@assignmentNonComplianceMessage@",   $policySource.metadata.NonComplianceMessage)
+    $readme = $readme.Replace("@rawGhPolicyEncoded@",               [System.Web.HTTPUtility]::UrlEncode($rawGhPolicy))
+    $readme = $readme.Replace("@rawGhPolicy@",                      $rawGhPolicy)
+    $readme = $readme.Replace("@rawGhParameters@",                  $rawGhParameters)
+    $readme = $readme.Replace("@rawGhRules@",                       $rawGhRules)
 
     $readme | Out-File -Path "$($policy.FullName)\README.md"
 }

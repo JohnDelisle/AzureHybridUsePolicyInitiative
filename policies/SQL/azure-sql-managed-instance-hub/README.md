@@ -27,7 +27,7 @@ $scope = Get-AzResourceGroup -Name 'YourResourceGroup'
 
 # Create the Policy Assignment
 $spLocation = 'YourLocationForSystemAssignmedManagedIdentity'
-$policyAssignment = New-AzPolicyAssignment -Name 'azure-sql-managed-instance-hub-assignment' -DisplayName ' Assignment' -Scope $scope.ResourceId -PolicyDefinition $policyDefinition -PolicyParameter $policyParameters -IdentityType SystemAssigned -Location $spLocation
+$policyAssignment = New-AzPolicyAssignment -Name 'azure-sql-managed-instance-hub-assignment' -DisplayName ' Assignment' -Scope $scope.ResourceId -PolicyDefinition $policyDefinition -NonComplianceMessage '' -PolicyParameter $policyParameters -IdentityType SystemAssigned -Location $spLocation
 
 # Create a Role Assignment
 # Grants the System Assigned Managed Identity (created duing Policy Assignement) with the RBAC Role (specified in the policy) to the Scope (specified in $scope above), 
