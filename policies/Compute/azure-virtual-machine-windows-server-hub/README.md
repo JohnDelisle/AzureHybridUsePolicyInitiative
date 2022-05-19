@@ -27,7 +27,7 @@ $scope = Get-AzResourceGroup -Name 'YourResourceGroup'
 
 # Create the Policy Assignment
 $spLocation = 'YourLocationForSystemAssignmedManagedIdentity'
-$policyAssignment = New-AzPolicyAssignment -Name 'azure-virtual-machine-windows-server-hub-assignment' -DisplayName 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server OSes Assignment' -Scope $scope.ResourceId -PolicyDefinition $policyDefinition -NonComplianceMessage 'Azure Virtual Machines running Windows Server OSes must be configured to use Hybrid Use Benefit licensing' -PolicyParameter $policyParameters -IdentityType SystemAssigned -Location $spLocation
+$policyAssignment = New-AzPolicyAssignment -Name 'azure-virtual-machine-windows-server-hub-assignment' -DisplayName 'Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server OSes Assignment' -Scope $scope.ResourceId -PolicyDefinition $policyDefinition -NonComplianceMessage @{message='Azure Virtual Machines running Windows Server OSes must be configured to use Hybrid Use Benefit licensing'} -PolicyParameter $policyParameters -IdentityType SystemAssigned -Location $spLocation
 
 # Create a Role Assignment
 # Grants the System Assigned Managed Identity (created duing Policy Assignement) with the RBAC Role (specified in the policy) to the Scope (specified in $scope above), 
