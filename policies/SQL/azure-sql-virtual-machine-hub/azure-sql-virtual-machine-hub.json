@@ -65,6 +65,9 @@
                 },
                 "location": {
                   "type": "String"
+                },
+                "virtualMachineResourceId": {
+                  "type": "String"
                 }
               },
               "variables": {},
@@ -95,7 +98,7 @@
                 "value": "[field('location')]"
               },
               "virtualMachineResourceId": {
-                "value": "[field('Microsoft.SqlVirtualMachine/SqlVirtualMachines/virtualMachineResourceId')]"
+                "value": "[field('virtualMachineResourceId')]"
               }
             }
           }
