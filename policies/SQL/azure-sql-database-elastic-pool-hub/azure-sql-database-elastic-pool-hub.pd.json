@@ -53,8 +53,8 @@
           "existenceCondition": {
             "allOf": [
               {
-                "field": "Microsoft.Sql/servers/elasticpools/BasePrice",
-                "Equals": "AHUB"
+                "field": "Microsoft.Sql/servers/elasticpools/licenseType",
+                "Equals": "BasePrice"
               }
             ]
           },
