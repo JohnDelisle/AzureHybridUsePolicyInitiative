@@ -5,7 +5,7 @@ $policyFiles = @()
 $policyFiles += Get-ChildItem -Path .\policies\SQL\*
 $policyFiles += Get-ChildItem -Path .\policies\Compute\* 
 
-$gh = "https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies/"
+$gh = "https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies"
 
 foreach ($policyFile in $policyFiles) {
     $policySource = Get-Content -Path "$($policyFile.FullName)\$($policyFile.Name).pd.json" | ConvertFrom-Json -Depth 99
