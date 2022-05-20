@@ -1,6 +1,6 @@
-# 
+# Hybrid Use Benefit (HUB) for Azure SQL Database Elastic Pool
 
-
+This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Database in Elastic Pools.
 
 ## Azure Policy Docs
 
@@ -14,7 +14,7 @@ See Microsoft documentation for background and use of Azure Policy samples [docs
 
 ````powershell
 # Create the Policy Definition (Subscription scope)
-$policyDefinition = New-AzPolicyDefinition -Name 'azure-sql-database-elastic-pool-hub' -DisplayName '' -description '' -Policy 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-database-elastic-pool-hub/azurepolicy.rules.json' -Parameter 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-database-elastic-pool-hub/azurepolicy.parameters.json' -Mode All
+$policyDefinition = New-AzPolicyDefinition -Name 'azure-sql-database-elastic-pool-hub' -DisplayName 'Hybrid Use Benefit (HUB) for Azure SQL Database Elastic Pool' -description 'This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Database in Elastic Pools.' -Policy 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-database-elastic-pool-hub/azurepolicy.rules.json' -Parameter 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-database-elastic-pool-hub/azurepolicy.parameters.json' -Mode All
 
 # Set the Policy Parameter (JSON format) to meet your needs.
 # "AuditIfNotExists" -- Audit and report on resources that are non-compliant
@@ -27,7 +27,7 @@ $scope = Get-AzResourceGroup -Name 'YourResourceGroup'
 
 # Create the Policy Assignment
 $spLocation = 'YourLocationForSystemAssignmedManagedIdentity'
-$policyAssignment = New-AzPolicyAssignment -Name 'azure-sql-database-elastic-pool-hub-assignment' -DisplayName ' Assignment' -Scope $scope.ResourceId -PolicyDefinition $policyDefinition -NonComplianceMessage @{message=''} -PolicyParameter $policyParameters -IdentityType SystemAssigned -Location $spLocation
+$policyAssignment = New-AzPolicyAssignment -Name 'azure-sql-database-elastic-pool-hub-assignment' -DisplayName 'Hybrid Use Benefit (HUB) for Azure SQL Database Elastic Pool Assignment' -Scope $scope.ResourceId -PolicyDefinition $policyDefinition -NonComplianceMessage @{message='Azure SQL Database Elastic Pools must be configured to use Hybrid Use Benefit licensing'} -PolicyParameter $policyParameters -IdentityType SystemAssigned -Location $spLocation
 
 # Create a Role Assignment
 # Grants the System Assigned Managed Identity (created duing Policy Assignement) with the RBAC Role (specified in the policy) to the Scope (specified in $scope above), 
@@ -40,7 +40,7 @@ $roleAssignment = New-AzRoleAssignment -PrincipalId $policyAssignment.Identity.P
 
 ```bash
 # Create the Policy Definition (Subscription scope)
-policyDefinition=$(az policy definition create --name 'azure-sql-database-elastic-pool-hub' --display-name '' --description '' --rules 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-database-elastic-pool-hub/azurepolicy.rules.json' --params 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-database-elastic-pool-hub/azurepolicy.parameters.json' --mode All)
+policyDefinition=$(az policy definition create --name 'azure-sql-database-elastic-pool-hub' --display-name 'Hybrid Use Benefit (HUB) for Azure SQL Database Elastic Pool' --description 'This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Database in Elastic Pools.' --rules 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-database-elastic-pool-hub/azurepolicy.rules.json' --params 'https://raw.githubusercontent.com/JohnDelisle/AzureHybridUsePolicyInitiative/main/policies//SQL/azure-sql-database-elastic-pool-hub/azurepolicy.parameters.json' --mode All)
 
 # Set the Policy Parameter (JSON format)
 # "AuditIfNotExists" -- Audit and report on resources that are non-compliant
@@ -59,6 +59,6 @@ scopeId=$(echo $scope | jq '.id' -r)
 roleId=$(echo $policyDefinition | jq '.policyRule.then.details.roleDefinitionIds[0]' -r | awk -F\/ '{print $NF}')
 policyDefinitionName=$(echo $policyDefinition | jq '.name' -r)
 scopeId=$(echo $scope | jq '.id' -r)
-policyAssignment=$(az policy assignment create --name 'azure-sql-database-elastic-pool-hub-assignment' --display-name ' Assignment' --scope "$scopeId" --policy "$policyDefinitionName" --params "$policyParameters" --mi-system-assigned --location "$spLocation" --identity-scope "$scopeId" --role "$roleId")
+policyAssignment=$(az policy assignment create --name 'azure-sql-database-elastic-pool-hub-assignment' --display-name 'Hybrid Use Benefit (HUB) for Azure SQL Database Elastic Pool Assignment' --scope "$scopeId" --policy "$policyDefinitionName" --params "$policyParameters" --mi-system-assigned --location "$spLocation" --identity-scope "$scopeId" --role "$roleId")
 
 ```

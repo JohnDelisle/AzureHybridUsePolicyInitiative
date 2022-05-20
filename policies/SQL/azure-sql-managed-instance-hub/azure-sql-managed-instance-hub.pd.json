@@ -1,17 +1,20 @@
 {
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
+  "name": "azure-sql-managed-instance-hub",
   "properties": {
-    "name": "azure-sql-database-elastic-pool-hub",
-    "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Database Elastic Pool",
-    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Database in Elastic Pools.",
-    "mode": "All",
+    "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Managed Instance",
+    "description": "This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Managed Instance.",
+    "mode": "all",
     "metadata": {
+      "version": "1.0.0",
       "category": "SQL",
-      "NonComplianceMessage": "Azure SQL Database Elastic Pools must be configured to use Hybrid Use Benefit licensing"
+      "NonComplianceMessage": "Azure SQL Managed Instance must be configured to use Hybrid Use Benefit licensing"
     },
     "parameters": {
       "effect": {
         "type": "string",
-        "defaultValue": "Audit",
+        "defaultValue": "AuditIfNotExists",
         "allowedValues": [
           "AuditIfNotExists",
           "DeployIfNotExists",
@@ -19,7 +22,7 @@
         ],
         "metadata": {
           "displayName": "Effect",
-          "description": "The effect determines what happens when the policy rule is evaluated to match"
+          "description": "The effect determines what happens when the policy rule is evaluated"
         }
       }
     },
@@ -28,30 +31,21 @@
         "allOf": [
           {
             "field": "type",
-            "equals": "Microsoft.Sql/servers/elasticPools"
-          },
-          {
-            "field": "Microsoft.Sql/servers/elasticpools/sku.tier",
-            "in": [
-              "BusinessCritical",
-              "GeneralPurpose"
-            ]
+            "equals": "Microsoft.Sql/ManagedInstances"
           }
         ]
       },
       "then": {
         "effect": "[parameters('effect')]",
         "details": {
-          "type": "Microsoft.Sql/servers/elasticPools",
-          "name": "[field('name')]",
           "roleDefinitionIds": [
-            "/providers/Microsoft.Authorization/roleDefinitions/9b7fa17d-e63e-47b0-bb0a-15c516ac86ec"
+            "/providers/Microsoft.Authorization/roleDefinitions/4939a1f6-9ae0-4e48-a1e0-f2cbe897382d"
           ],
           "existenceCondition": {
             "allOf": [
               {
-                "field": "Microsoft.Sql/servers/elasticpools/BasePrice",
-                "Equals": "AHUB"
+                "field": "Microsoft.Sql/ManagedInstances/LicenseType",
+                "Equals": "BasePrice"
               }
             ]
           },
@@ -72,7 +66,7 @@
                 "variables": {},
                 "resources": [
                   {
-                    "type": "Microsoft.Sql/servers/elasticpools",
+                    "type": "Microsoft.Sql/ManagedInstances",
                     "apiVersion": "2021-11-01-preview",
                     "name": "[parameters('name')]",
                     "location": "[parameters('location')]",
@@ -84,13 +78,13 @@
                 "outputs": {
                   "policy": {
                     "type": "string",
-                    "value": "[concat('Set LicenseType of Azure SQL Elastic Pool ', parameters('name'), ' to BasePrice (HUB enabled)')]"
+                    "value": "[concat('Set licenseType of Azure SQL Managed Instance ', parameters('name'), ' to BasePrice (HUB enabled)')]"
                   }
                 }
               },
               "parameters": {
                 "name": {
-                  "value": "[field('fullName')]"
+                  "value": "[field('name')]"
                 },
                 "location": {
                   "value": "[field('location')]"

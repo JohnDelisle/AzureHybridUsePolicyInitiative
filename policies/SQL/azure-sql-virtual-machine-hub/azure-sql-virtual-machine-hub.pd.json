@@ -1,15 +1,15 @@
 {
   "type": "Microsoft.Authorization/policyDefinitions",
   "apiVersion": "2021-06-01",
-  "name": "azure-virtual-machine-windows-server-hub",
+  "name": "azure-sql-virtual-machine-hub",
   "properties": {
-    "displayName": "Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server OSes",
-    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure VMs running Windows Server OSes",
-    "mode": "all",
+    "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Virtual Machines",
+    "description": "This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Virtual Machines.",
+    "mode": "All",
     "metadata": {
       "version": "1.0.0",
-      "category": "Compute",
-      "NonComplianceMessage": "Azure Virtual Machines running Windows Server OSes must be configured to use Hybrid Use Benefit licensing"
+      "category": "SQL",
+      "NonComplianceMessage": "Azure SQL Virtual Machines must be configured to use Hybrid Use Benefit licensing"
     },
     "parameters": {
       "effect": {
@@ -31,33 +31,30 @@
         "allOf": [
           {
             "field": "type",
+            "equals": "Microsoft.SqlVirtualMachine/SqlVirtualMachines"
+          },
+          {
+            "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlImageSku",
             "in": [
-              "Microsoft.Compute/virtualMachines",
-              "Microsoft.Compute/VirtualMachineScaleSets"
+              "Standard",
+              "Enterprise"
             ]
-          },
-          {
-            "field": "Microsoft.Compute/imagePublisher",
-            "equals": "MicrosoftWindowsServer"
-          },
-          {
-            "field": "Microsoft.Compute/imageOffer",
-            "equals": "WindowsServer"
           }
         ]
       },
       "then": {
         "effect": "[parameters('effect')]",
         "details": {
-          "type": "Microsoft.Compute/virtualMachines",
+          "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
+          "name": "[field('name')]",
           "roleDefinitionIds": [
             "/providers/Microsoft.Authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c"
           ],
           "existenceCondition": {
             "allOf": [
               {
-                "field": "Microsoft.Compute/licenseType",
-                "equals": "Windows_Server"
+                "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlServerLicenseType",
+                "Equals": "AHUB"
               }
             ]
           },
@@ -73,24 +70,28 @@
                   },
                   "location": {
                     "type": "String"
+                  },
+                  "virtualMachineResourceId": {
+                    "type": "String"
                   }
                 },
                 "variables": {},
                 "resources": [
                   {
-                    "type": "Microsoft.Compute/virtualMachines",
-                    "apiVersion": "2021-03-01",
+                    "type": "Microsoft.SqlVirtualMachine/sqlVirtualMachines",
+                    "apiVersion": "2021-11-01-preview",
                     "name": "[parameters('name')]",
                     "location": "[parameters('location')]",
                     "properties": {
-                      "licenseType": "Windows_Server"
+                      "virtualMachineResourceId": "[parameters('virtualMachineResourceId')]",
+                      "sqlServerLicenseType": "AHUB"
                     }
                   }
                 ],
                 "outputs": {
                   "policy": {
                     "type": "string",
-                    "value": "[concat('Set LicenseType of Windows Server VM ', parameters('name'), ' to Windows_Server (HUB enabled)')]"
+                    "value": "[concat('Set sqlServerLicenseType of Azure SQL Virtual Machine ', parameters('name'), ' to AHUB (HUB enabled)')]"
                   }
                 }
               },
@@ -100,6 +101,9 @@
                 },
                 "location": {
                   "value": "[field('location')]"
+                },
+                "virtualMachineResourceId": {
+                  "value": "[field('Microsoft.SqlVirtualMachine/SqlVirtualMachines/virtualMachineResourceId')]"
                 }
               }
             }

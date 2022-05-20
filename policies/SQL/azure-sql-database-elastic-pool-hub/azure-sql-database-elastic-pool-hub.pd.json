@@ -1,20 +1,20 @@
 {
   "type": "Microsoft.Authorization/policyDefinitions",
   "apiVersion": "2021-06-01",
-  "name": "azure-virtual-machine-windows-server-hub",
+  "name": "azure-sql-database-elastic-pool-hub",
   "properties": {
-    "displayName": "Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server OSes",
-    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure VMs running Windows Server OSes",
+    "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Database Elastic Pool",
+    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Database in Elastic Pools.",
     "mode": "all",
     "metadata": {
       "version": "1.0.0",
-      "category": "Compute",
-      "NonComplianceMessage": "Azure Virtual Machines running Windows Server OSes must be configured to use Hybrid Use Benefit licensing"
+      "category": "SQL",
+      "NonComplianceMessage": "Azure SQL Database Elastic Pools must be configured to use Hybrid Use Benefit licensing"
     },
     "parameters": {
       "effect": {
         "type": "string",
-        "defaultValue": "AuditIfNotExists",
+        "defaultValue": "Audit",
         "allowedValues": [
           "AuditIfNotExists",
           "DeployIfNotExists",
@@ -22,7 +22,7 @@
         ],
         "metadata": {
           "displayName": "Effect",
-          "description": "The effect determines what happens when the policy rule is evaluated"
+          "description": "The effect determines what happens when the policy rule is evaluated to match"
         }
       }
     },
@@ -31,33 +31,30 @@
         "allOf": [
           {
             "field": "type",
+            "equals": "Microsoft.Sql/servers/elasticPools"
+          },
+          {
+            "field": "Microsoft.Sql/servers/elasticpools/sku.tier",
             "in": [
-              "Microsoft.Compute/virtualMachines",
-              "Microsoft.Compute/VirtualMachineScaleSets"
+              "BusinessCritical",
+              "GeneralPurpose"
             ]
-          },
-          {
-            "field": "Microsoft.Compute/imagePublisher",
-            "equals": "MicrosoftWindowsServer"
-          },
-          {
-            "field": "Microsoft.Compute/imageOffer",
-            "equals": "WindowsServer"
           }
         ]
       },
       "then": {
         "effect": "[parameters('effect')]",
         "details": {
-          "type": "Microsoft.Compute/virtualMachines",
+          "type": "Microsoft.Sql/servers/elasticPools",
+          "name": "[field('name')]",
           "roleDefinitionIds": [
-            "/providers/Microsoft.Authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c"
+            "/providers/Microsoft.Authorization/roleDefinitions/9b7fa17d-e63e-47b0-bb0a-15c516ac86ec"
           ],
           "existenceCondition": {
             "allOf": [
               {
-                "field": "Microsoft.Compute/licenseType",
-                "equals": "Windows_Server"
+                "field": "Microsoft.Sql/servers/elasticpools/BasePrice",
+                "Equals": "AHUB"
               }
             ]
           },
@@ -78,25 +75,25 @@
                 "variables": {},
                 "resources": [
                   {
-                    "type": "Microsoft.Compute/virtualMachines",
-                    "apiVersion": "2021-03-01",
+                    "type": "Microsoft.Sql/servers/elasticpools",
+                    "apiVersion": "2021-11-01-preview",
                     "name": "[parameters('name')]",
                     "location": "[parameters('location')]",
                     "properties": {
-                      "licenseType": "Windows_Server"
+                      "licenseType": "BasePrice"
                     }
                   }
                 ],
                 "outputs": {
                   "policy": {
                     "type": "string",
-                    "value": "[concat('Set LicenseType of Windows Server VM ', parameters('name'), ' to Windows_Server (HUB enabled)')]"
+                    "value": "[concat('Set LicenseType of Azure SQL Elastic Pool ', parameters('name'), ' to BasePrice (HUB enabled)')]"
                   }
                 }
               },
               "parameters": {
                 "name": {
-                  "value": "[field('name')]"
+                  "value": "[field('fullName')]"
                 },
                 "location": {
                   "value": "[field('location')]"

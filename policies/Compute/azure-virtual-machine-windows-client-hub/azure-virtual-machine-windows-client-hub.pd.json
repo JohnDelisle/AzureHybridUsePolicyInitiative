@@ -1,15 +1,15 @@
 {
   "type": "Microsoft.Authorization/policyDefinitions",
   "apiVersion": "2021-06-01",
-  "name": "azure-virtual-machine-windows-server-hub",
+  "name": "azure-virtual-machine-windows-client-hub",
   "properties": {
-    "displayName": "Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Server OSes",
-    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure VMs running Windows Server OSes",
+    "displayName": "Hybrid Use Benefit (HUB) for Azure Virtual Machines, Windows Client OSes",
+    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure VMs running Windows Client OSes (Windows 7, 10, 11, etc.)",
     "mode": "all",
     "metadata": {
       "version": "1.0.0",
       "category": "Compute",
-      "NonComplianceMessage": "Azure Virtual Machines running Windows Server OSes must be configured to use Hybrid Use Benefit licensing"
+      "NonComplianceMessage": "Azure Virtual Machines running Windows Client OSes must be configured to use Hybrid Use Benefit licensing"
     },
     "parameters": {
       "effect": {
@@ -38,11 +38,11 @@
           },
           {
             "field": "Microsoft.Compute/imagePublisher",
-            "equals": "MicrosoftWindowsServer"
+            "equals": "MicrosoftWindowsDesktop"
           },
           {
             "field": "Microsoft.Compute/imageOffer",
-            "equals": "WindowsServer"
+            "like": "Windows-*"
           }
         ]
       },
@@ -57,7 +57,7 @@
             "allOf": [
               {
                 "field": "Microsoft.Compute/licenseType",
-                "equals": "Windows_Server"
+                "equals": "Windows_Client"
               }
             ]
           },
@@ -83,14 +83,14 @@
                     "name": "[parameters('name')]",
                     "location": "[parameters('location')]",
                     "properties": {
-                      "licenseType": "Windows_Server"
+                      "licenseType": "Windows_Client"
                     }
                   }
                 ],
                 "outputs": {
                   "policy": {
                     "type": "string",
-                    "value": "[concat('Set LicenseType of Windows Server VM ', parameters('name'), ' to Windows_Server (HUB enabled)')]"
+                    "value": "[concat('Set LicenseType of Windows Client VM ', parameters('name'), ' to Windows_Client (HUB enabled)')]"
                   }
                 }
               },

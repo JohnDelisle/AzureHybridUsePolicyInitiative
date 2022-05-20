@@ -1,105 +1,110 @@
 {
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
   "name": "azure-sql-virtual-machine-hub",
-  "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Virtual Machines",
-  "description": "This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Virtual Machines.",
-  "mode": "All",
-  "metadata": {
-    "category": "SQL",
-    "NonComplianceMessage": "Azure SQL Virtual Machines must be configured to use Hybrid Use Benefit licensing"
-  },
-  "parameters": {
-    "effect": {
-      "type": "string",
-      "defaultValue": "AuditIfNotExists",
-      "allowedValues": [
-        "AuditIfNotExists",
-        "DeployIfNotExists",
-        "Disabled"
-      ],
-      "metadata": {
-        "displayName": "Effect",
-        "description": "The effect determines what happens when the policy rule is evaluated"
-      }
-    }
-  },
-  "policyRule": {
-    "if": {
-      "allOf": [
-        {
-          "field": "type",
-          "equals": "Microsoft.SqlVirtualMachine/SqlVirtualMachines"
-        },
-        {
-          "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlImageSku",
-          "in": [
-            "Standard",
-            "Enterprise"
-          ]
-        }
-      ]
+  "properties": {
+    "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Virtual Machines",
+    "description": "This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Virtual Machines.",
+    "mode": "All",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "SQL",
+      "NonComplianceMessage": "Azure SQL Virtual Machines must be configured to use Hybrid Use Benefit licensing"
     },
-    "then": {
-      "effect": "[parameters('effect')]",
-      "details": {
-        "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
-        "name": "[field('name')]",
-        "roleDefinitionIds": [
-          "/providers/Microsoft.Authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c"
+    "parameters": {
+      "effect": {
+        "type": "string",
+        "defaultValue": "AuditIfNotExists",
+        "allowedValues": [
+          "AuditIfNotExists",
+          "DeployIfNotExists",
+          "Disabled"
         ],
-        "existenceCondition": {
-          "allOf": [
-            {
-              "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlServerLicenseType",
-              "Equals": "AHUB"
-            }
-          ]
-        },
-        "deployment": {
-          "properties": {
-            "mode": "incremental",
-            "template": {
-              "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-              "contentVersion": "1.0.0.0",
-              "parameters": {
-                "name": {
-                  "type": "String"
+        "metadata": {
+          "displayName": "Effect",
+          "description": "The effect determines what happens when the policy rule is evaluated"
+        }
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.SqlVirtualMachine/SqlVirtualMachines"
+          },
+          {
+            "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlImageSku",
+            "in": [
+              "Standard",
+              "Enterprise"
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[parameters('effect')]",
+        "details": {
+          "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
+          "name": "[field('name')]",
+          "roleDefinitionIds": [
+            "/providers/Microsoft.Authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c"
+          ],
+          "existenceCondition": {
+            "allOf": [
+              {
+                "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlServerLicenseType",
+                "Equals": "AHUB"
+              }
+            ]
+          },
+          "deployment": {
+            "properties": {
+              "mode": "incremental",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                  "name": {
+                    "type": "String"
+                  },
+                  "location": {
+                    "type": "String"
+                  },
+                  "virtualMachineResourceId": {
+                    "type": "String"
+                  }
                 },
-                "location": {
-                  "type": "String"
-                },
-                "virtualMachineResourceId": {
-                  "type": "String"
-                }
-              },
-              "variables": {},
-              "resources": [
-                {
-                  "type": "Microsoft.SqlVirtualMachine/sqlVirtualMachines",
-                  "apiVersion": "2021-11-01-preview",
-                  "name": "[parameters('name')]",
-                  "location": "[parameters('location')]",
-                  "properties": {
-                    "virtualMachineResourceId": "[parameters('virtualMachineResourceId')]",
-                    "sqlServerLicenseType": "AHUB"
+                "variables": {},
+                "resources": [
+                  {
+                    "type": "Microsoft.SqlVirtualMachine/sqlVirtualMachines",
+                    "apiVersion": "2021-11-01-preview",
+                    "name": "[parameters('name')]",
+                    "location": "[parameters('location')]",
+                    "properties": {
+                      "virtualMachineResourceId": "[parameters('virtualMachineResourceId')]",
+                      "sqlServerLicenseType": "AHUB"
+                    }
+                  }
+                ],
+                "outputs": {
+                  "policy": {
+                    "type": "string",
+                    "value": "[concat('Set sqlServerLicenseType of Azure SQL Virtual Machine ', parameters('name'), ' to AHUB (HUB enabled)')]"
                   }
                 }
-              ],
-              "outputs": {
-                "policy": {
-                  "type": "string",
-                  "value": "[concat('Set sqlServerLicenseType of Azure SQL Virtual Machine ', parameters('name'), ' to AHUB (HUB enabled)')]"
+              },
+              "parameters": {
+                "name": {
+                  "value": "[field('name')]"
+                },
+                "location": {
+                  "value": "[field('location')]"
+                },
+                "virtualMachineResourceId": {
+                  "value": "[field('Microsoft.SqlVirtualMachine/SqlVirtualMachines/virtualMachineResourceId')]"
                 }
-              }
-            },
-            "parameters": {
-              "name": {
-                "value": "[field('name')]"
-              },
-              "location": {
-                "value": "[field('location')]"
-              },
-              "virtualMachineResourceId": {
-                "value": "[field('Microsoft.SqlVirtualMachine/SqlVirtualMachines/virtualMachineResourceId')]"
               }
             }
           }

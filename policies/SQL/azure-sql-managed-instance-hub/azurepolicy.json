@@ -1,89 +1,94 @@
 {
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2021-06-01",
   "name": "azure-sql-managed-instance-hub",
-  "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Managed Instance",
-  "description": "This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Managed Instance.",
-  "mode": "All",
-  "metadata": {
-    "category": "SQL",
-    "NonComplianceMessage": "Azure SQL Managed Instance must be configured to use Hybrid Use Benefit licensing"
-  },
-  "parameters": {
-    "effect": {
-      "type": "string",
-      "defaultValue": "AuditIfNotExists",
-      "allowedValues": [
-        "AuditIfNotExists",
-        "DeployIfNotExists",
-        "Disabled"
-      ],
-      "metadata": {
-        "displayName": "Effect",
-        "description": "The effect determines what happens when the policy rule is evaluated"
-      }
-    }
-  },
-  "policyRule": {
-    "if": {
-      "allOf": [
-        {
-          "field": "type",
-          "equals": "Microsoft.Sql/ManagedInstances"
-        }
-      ]
+  "properties": {
+    "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Managed Instance",
+    "description": "This policy assists with the governance of Azure Hybrid Use Benefit for Azure SQL Managed Instance.",
+    "mode": "all",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "SQL",
+      "NonComplianceMessage": "Azure SQL Managed Instance must be configured to use Hybrid Use Benefit licensing"
     },
-    "then": {
-      "effect": "[parameters('effect')]",
-      "details": {
-        "roleDefinitionIds": [
-          "/providers/Microsoft.Authorization/roleDefinitions/4939a1f6-9ae0-4e48-a1e0-f2cbe897382d"
+    "parameters": {
+      "effect": {
+        "type": "string",
+        "defaultValue": "AuditIfNotExists",
+        "allowedValues": [
+          "AuditIfNotExists",
+          "DeployIfNotExists",
+          "Disabled"
         ],
-        "existenceCondition": {
-          "allOf": [
-            {
-              "field": "Microsoft.Sql/ManagedInstances/LicenseType",
-              "Equals": "BasePrice"
-            }
-          ]
-        },
-        "deployment": {
-          "properties": {
-            "mode": "incremental",
-            "template": {
-              "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-              "contentVersion": "1.0.0.0",
-              "parameters": {
-                "name": {
-                  "type": "String"
+        "metadata": {
+          "displayName": "Effect",
+          "description": "The effect determines what happens when the policy rule is evaluated"
+        }
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Sql/ManagedInstances"
+          }
+        ]
+      },
+      "then": {
+        "effect": "[parameters('effect')]",
+        "details": {
+          "roleDefinitionIds": [
+            "/providers/Microsoft.Authorization/roleDefinitions/4939a1f6-9ae0-4e48-a1e0-f2cbe897382d"
+          ],
+          "existenceCondition": {
+            "allOf": [
+              {
+                "field": "Microsoft.Sql/ManagedInstances/LicenseType",
+                "Equals": "BasePrice"
+              }
+            ]
+          },
+          "deployment": {
+            "properties": {
+              "mode": "incremental",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                  "name": {
+                    "type": "String"
+                  },
+                  "location": {
+                    "type": "String"
+                  }
                 },
-                "location": {
-                  "type": "String"
-                }
-              },
-              "variables": {},
-              "resources": [
-                {
-                  "type": "Microsoft.Sql/ManagedInstances",
-                  "apiVersion": "2021-11-01-preview",
-                  "name": "[parameters('name')]",
-                  "location": "[parameters('location')]",
-                  "properties": {
-                    "licenseType": "BasePrice"
+                "variables": {},
+                "resources": [
+                  {
+                    "type": "Microsoft.Sql/ManagedInstances",
+                    "apiVersion": "2021-11-01-preview",
+                    "name": "[parameters('name')]",
+                    "location": "[parameters('location')]",
+                    "properties": {
+                      "licenseType": "BasePrice"
+                    }
+                  }
+                ],
+                "outputs": {
+                  "policy": {
+                    "type": "string",
+                    "value": "[concat('Set licenseType of Azure SQL Managed Instance ', parameters('name'), ' to BasePrice (HUB enabled)')]"
                   }
                 }
-              ],
-              "outputs": {
-                "policy": {
-                  "type": "string",
-                  "value": "[concat('Set licenseType of Azure SQL Managed Instance ', parameters('name'), ' to BasePrice (HUB enabled)')]"
-                }
-              }
-            },
-            "parameters": {
-              "name": {
-                "value": "[field('name')]"
               },
-              "location": {
-                "value": "[field('location')]"
+              "parameters": {
+                "name": {
+                  "value": "[field('name')]"
+                },
+                "location": {
+                  "value": "[field('location')]"
+                }
               }
             }
           }
