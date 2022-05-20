@@ -55,15 +55,15 @@
         "effect": "[parameters('effect')]",
         "details": {
           "type": "Microsoft.Sql/servers/databases",
-          "name": "[field('name')]",
+          "name": "[field('fullName')]",
           "roleDefinitionIds": [
             "/providers/Microsoft.Authorization/roleDefinitions/9b7fa17d-e63e-47b0-bb0a-15c516ac86ec"
           ],
           "existenceCondition": {
             "allOf": [
               {
-                "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlServerLicenseType",
-                "Equals": "AHUB"
+                "field": "Microsoft.Sql/servers/databases/licenseType",
+                "Equals": "BasePrice"
               }
             ]
           },
@@ -96,7 +96,7 @@
                 "outputs": {
                   "policy": {
                     "type": "string",
-                    "value": "[concat('Set LicenseType of Azure SQL Virtual Machine ', parameters('name'), ' to BasePrice (HUB enabled)')]"
+                    "value": "[concat('Set LicenseType of Azure SQL Database ', parameters('name'), ' to BasePrice (HUB enabled)')]"
                   }
                 }
               },
