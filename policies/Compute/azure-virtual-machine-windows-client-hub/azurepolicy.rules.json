@@ -62,7 +62,7 @@
             "outputs": {
               "policy": {
                 "type": "string",
-                "value": "[concat('Set LicenseType of Windows Client VM ', parameters('name'), ' to Windows_Client')]"
+                "value": "[concat('Set LicenseType of Windows Client VM ', parameters('name'), ' to Windows_Client (HUB enabled)')]"
               }
             }
           },

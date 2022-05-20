@@ -87,7 +87,7 @@
               "outputs": {
                 "policy": {
                   "type": "string",
-                  "value": "[concat('Set sqlServerLicenseType of Azure SQL Virtual Machine ', parameters('name'), ' to AHUB')]"
+                  "value": "[concat('Set sqlServerLicenseType of Azure SQL Virtual Machine ', parameters('name'), ' to AHUB (HUB enabled)')]"
                 }
               }
             },

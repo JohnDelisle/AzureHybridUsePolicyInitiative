@@ -6,7 +6,7 @@
     "mode": "All",
     "metadata": {
       "category": "SQL",
-      "NonComplianceMessage": "Azure SQL Databases in Elastic Pools must be configured to use Hybrid Use Benefit licensing"
+      "NonComplianceMessage": "Azure SQL Database Elastic Pools must be configured to use Hybrid Use Benefit licensing"
     },
     "parameters": {
       "effect": {
@@ -42,17 +42,62 @@
       "then": {
         "effect": "[parameters('effect')]",
         "details": {
+          "type": "Microsoft.Sql/servers/elasticPools",
+          "name": "[field('name')]",
           "roleDefinitionIds": [
             "/providers/Microsoft.Authorization/roleDefinitions/9b7fa17d-e63e-47b0-bb0a-15c516ac86ec"
           ],
-          "conflictEffect": "deny",
-          "operations": [
-            {
-              "operation": "addOrReplace",
-              "field": "Microsoft.Sql/servers/elasticpools/licenseType",
-              "equals": "BasePrice"
+          "existenceCondition": {
+            "allOf": [
+              {
+                "field": "Microsoft.Sql/servers/elasticpools/BasePrice",
+                "Equals": "AHUB"
+              }
+            ]
+          },
+          "deployment": {
+            "properties": {
+              "mode": "incremental",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                  "name": {
+                    "type": "String"
+                  },
+                  "location": {
+                    "type": "String"
+                  }
+                },
+                "variables": {},
+                "resources": [
+                  {
+                    "type": "Microsoft.Sql/servers/elasticpools",
+                    "apiVersion": "2021-11-01-preview",
+                    "name": "[parameters('name')]",
+                    "location": "[parameters('location')]",
+                    "properties": {
+                      "licenseType": "BasePrice"
+                    }
+                  }
+                ],
+                "outputs": {
+                  "policy": {
+                    "type": "string",
+                    "value": "[concat('Set LicenseType of Azure SQL Elastic Pool ', parameters('name'), ' to BasePrice (HUB enabled)')]"
+                  }
+                }
+              },
+              "parameters": {
+                "name": {
+                  "value": "[field('fullName')]"
+                },
+                "location": {
+                  "value": "[field('location')]"
+                }
+              }
             }
-          ]
+          }
         }
       }
     }

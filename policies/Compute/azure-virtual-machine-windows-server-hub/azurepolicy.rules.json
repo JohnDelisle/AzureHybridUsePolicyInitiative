@@ -62,7 +62,7 @@
             "outputs": {
               "policy": {
                 "type": "string",
-                "value": "[concat('Set LicenseType of Windows Server VM ', parameters('name'), ' to Windows_Server')]"
+                "value": "[concat('Set LicenseType of Windows Server VM ', parameters('name'), ' to Windows_Server (HUB enabled)')]"
               }
             }
           },

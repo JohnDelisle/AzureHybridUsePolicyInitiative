@@ -1,67 +1,110 @@
 {
-  "properties": {
-    "name": "azure-sql-database-hub",
-    "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Database",
-    "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Databases.",
-    "mode": "All",
-    "metadata": {
-      "category": "SQL",
-      "NonComplianceMessage": "Azure SQL Databases must be configured to use Hybrid Use Benefit licensing"
-    },
-    "parameters": {
-      "effect": {
-        "type": "string",
-        "defaultValue": "Audit",
-        "allowedValues": [
-          "AuditIfNotExists",
-          "DeployIfNotExists",
-          "Disabled"
-        ],
-        "metadata": {
-          "displayName": "Effect",
-          "description": "The effect determines what happens when the policy rule is evaluated to match"
-        }
+  "name": "azure-sql-database-hub",
+  "displayName": "Hybrid Use Benefit (HUB) for Azure SQL Database",
+  "description": "This policy assists with the governance of Azure Hybrid Use Benefit on Azure SQL Databases.",
+  "mode": "All",
+  "metadata": {
+    "category": "SQL",
+    "NonComplianceMessage": "Azure SQL Databases must be configured to use Hybrid Use Benefit licensing"
+  },
+  "parameters": {
+    "effect": {
+      "type": "string",
+      "defaultValue": "Audit",
+      "allowedValues": [
+        "AuditIfNotExists",
+        "DeployIfNotExists",
+        "Disabled"
+      ],
+      "metadata": {
+        "displayName": "Effect",
+        "description": "The effect determines what happens when the policy rule is evaluated to match"
       }
+    }
+  },
+  "policyRule": {
+    "if": {
+      "allOf": [
+        {
+          "field": "type",
+          "equals": "Microsoft.Sql/servers/databases"
+        },
+        {
+          "field": "Microsoft.Sql/servers/databases/currentSku.tier",
+          "in": [
+            "GeneralPurpose",
+            "Hyperscale",
+            "BusinessCritical"
+          ]
+        },
+        {
+          "field": "Microsoft.Sql/servers/databases/currentSku.name",
+          "notContains": "GP_S"
+        },
+        {
+          "field": "Microsoft.Sql/servers/databases/currentSku.name",
+          "notEquals": "ElasticPool"
+        }
+      ]
     },
-    "policyRule": {
-      "if": {
-        "allOf": [
-          {
-            "field": "type",
-            "equals": "Microsoft.Sql/servers/databases"
-          },
-          {
-            "field": "Microsoft.Sql/servers/databases/currentSku.tier",
-            "in": [
-              "GeneralPurpose",
-              "Hyperscale",
-              "BusinessCritical"
-            ]
-          },
-          {
-            "field": "Microsoft.Sql/servers/databases/currentSku.name",
-            "notContains": "GP_S"
-          },
-          {
-            "field": "Microsoft.Sql/servers/databases/currentSku.name",
-            "notEquals": "ElasticPool"
-          }
-        ]
-      },
-      "then": {
-        "effect": "[parameters('effect')]",
-        "details": {
-          "roleDefinitionIds": [
-            "/providers/Microsoft.Authorization/roleDefinitions/9b7fa17d-e63e-47b0-bb0a-15c516ac86ec"
-          ],
-          "conflictEffect": "deny",
-          "operations": [
+    "then": {
+      "effect": "[parameters('effect')]",
+      "details": {
+        "type": "Microsoft.Sql/servers/databases",
+        "name": "[field('name')]",
+        "roleDefinitionIds": [
+          "/providers/Microsoft.Authorization/roleDefinitions/9b7fa17d-e63e-47b0-bb0a-15c516ac86ec"
+        ],
+        "existenceCondition": {
+          "allOf": [
             {
-              "operation": "addOrReplace",
-              "field": "Microsoft.Sql/servers/databases/licenseType",
-              "equals": "BasePrice"
+              "field": "Microsoft.SqlVirtualMachine/SqlVirtualMachines/sqlServerLicenseType",
+              "Equals": "AHUB"
             }
           ]
+        },
+        "deployment": {
+          "properties": {
+            "mode": "incremental",
+            "template": {
+              "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+              "contentVersion": "1.0.0.0",
+              "parameters": {
+                "name": {
+                  "type": "String"
+                },
+                "location": {
+                  "type": "String"
+                }
+              },
+              "variables": {},
+              "resources": [
+                {
+                  "type": "Microsoft.Sql/servers/databases",
+                  "apiVersion": "2021-11-01-preview",
+                  "name": "[parameters('name')]",
+                  "location": "[parameters('location')]",
+                  "properties": {
+                    "licenseType": "BasePrice"
+                  }
+                }
+              ],
+              "outputs": {
+                "policy": {
+                  "type": "string",
+                  "value": "[concat('Set LicenseType of Azure SQL Virtual Machine ', parameters('name'), ' to BasePrice (HUB enabled)')]"
+                }
+              }
+            },
+            "parameters": {
+              "name": {
+                "value": "[field('fullName')]"
+              },
+              "location": {
+                "value": "[field('location')]"
+              }
+            }
+          }
         }
       }
     }
