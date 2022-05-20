@@ -9,6 +9,8 @@
   },
   "then": {
     "effect": "[parameters('effect')]",
+    "type": "Microsoft.Sql/ManagedInstances",
+    "name": "[field('name')]",
     "details": {
       "roleDefinitionIds": [
         "/providers/Microsoft.Authorization/roleDefinitions/4939a1f6-9ae0-4e48-a1e0-f2cbe897382d"
