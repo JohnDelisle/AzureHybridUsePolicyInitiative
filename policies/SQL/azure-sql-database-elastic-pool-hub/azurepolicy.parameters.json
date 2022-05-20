@@ -1,7 +1,7 @@
 {
   "effect": {
     "type": "string",
-    "defaultValue": "Audit",
+    "defaultValue": "AuditIfNotExists",
     "allowedValues": [
       "AuditIfNotExists",
       "DeployIfNotExists",
